@@ -1,0 +1,649 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Assignment\n",
+    "\n",
+    "-------------\n",
+    "\n",
+    "**1) Complete this notebook and make a pull request:** \n",
+    "\n",
+    "Answer questions (Q) in the space provided (A) in this notebook. When finished, copy your notebook to the `Assignment/` directory and name it `nb-6.5-<Github-username>.ipynb`. Then make a pull request to the upstream repo. The entered answers in this notebook will be simply Markdown text where I want you to interpret and describe a block of code to better understand what it is doing. Much of this code you will have seen already. \n",
+    "\n",
+    "\n",
+    "**2) Write an importable Python package, save as a repo, and test it here.**\n",
+    "\n",
+    "The package should be written as we did in our last lession (`.py` files in a directory with a setup.py file so it can be installed with `pip`). Follow instructions at the end of this notebook for how to write your package. Test it here by importing the package and executing the code at the end. It should work and give correct answers, if not, continue working on it. When you have it completed save your package as a new Github repo named `seqlib`."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### The `seqlib` package\n",
+    "\n",
+    "Together we are going to write several functions here that will make up your new package called `seqlib`. It will be your job to copy these functions, organize them into a Class, save the code into a `.py` file (you can use SublimeText if you're comfortable with it for much of this, or any text editor including the one in jupyter), package the files so they can be imported as a library, and test the package so that it accomplishes the tasks which are defined at the end of this notebook. First things first, though, let's write the functions. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import pandas as pd"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Q.  Describe what the `mutate()` function below does:\n",
+    "\n",
+    "\n",
+    "A. `mutate()` creates two sets, one with \"ACTG\" and one with the character you pass through the function. The `diff` variable is a set of bases without the base you passed through the argument. The function then returns a random base from the remaining options (ie, from those in the `diff` variable)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def mutate(base):\n",
+    "    diff = set(\"ACTG\") - set(base)\n",
+    "    return np.random.choice(list(diff))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'A'"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# test it\n",
+    "mutate(\"C\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Q. Describe how the `seqdata()` function below works:\n",
+    "Annotate the code by inserting lines with comments as you read through the function to make sense of it. What is being created at each step and how is it used?\n",
+    "\n",
+    "\n",
+    "A. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#function takes two inputs, ninds and nsites\n",
+    "def simulate(ninds, nsites):\n",
+    "    #creates array of size nsites of random bases A C T or G in sequence\n",
+    "    oseq = np.random.choice(list(\"ACGT\"), size=nsites)\n",
+    "    #repeats the oseq array ninds number of times\n",
+    "    arr = np.array([oseq for i in range(ninds)])\n",
+    "    print(arr)\n",
+    "    #creates mask based on binomial distribution to represent mutations in base pairs\n",
+    "    muts = np.random.binomial(1, 0.1, (ninds, nsites))\n",
+    "    print(muts)\n",
+    "    #for loop uses mask and mutate function to replace 1s with a new random base at each mutation\n",
+    "    for col in range(nsites):\n",
+    "        print(arr[0, col])\n",
+    "        newbase = mutate(arr[0, col])\n",
+    "        mask = muts[:, col].astype(bool)\n",
+    "        arr[:, col][mask] = newbase\n",
+    "    #creates mask based on binomial distribution to represent missing base pairs \n",
+    "    missing = np.random.binomial(1, 0.1, (ninds, nsites))\n",
+    "    #uses mask to replace 1s with Ns to indicate missing base pairs\n",
+    "    arr[missing.astype(bool)] = \"N\"\n",
+    "    #returns the modified matrix\n",
+    "    return arr"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[['T' 'T' 'T' 'C' 'A' 'T' 'G' 'T' 'G' 'C' 'A' 'G' 'T' 'A' 'T']\n",
+      " ['T' 'T' 'T' 'C' 'A' 'T' 'G' 'T' 'G' 'C' 'A' 'G' 'T' 'A' 'T']\n",
+      " ['T' 'T' 'T' 'C' 'A' 'T' 'G' 'T' 'G' 'C' 'A' 'G' 'T' 'A' 'T']\n",
+      " ['T' 'T' 'T' 'C' 'A' 'T' 'G' 'T' 'G' 'C' 'A' 'G' 'T' 'A' 'T']\n",
+      " ['T' 'T' 'T' 'C' 'A' 'T' 'G' 'T' 'G' 'C' 'A' 'G' 'T' 'A' 'T']\n",
+      " ['T' 'T' 'T' 'C' 'A' 'T' 'G' 'T' 'G' 'C' 'A' 'G' 'T' 'A' 'T']]\n",
+      "[[0 0 0 0 0 0 0 1 0 0 0 0 1 0 0]\n",
+      " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n",
+      " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n",
+      " [0 0 0 0 0 0 0 0 0 0 0 0 1 0 0]\n",
+      " [0 0 0 0 0 1 0 0 0 1 0 0 0 0 0]\n",
+      " [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]]\n",
+      "T\n",
+      "T\n",
+      "T\n",
+      "C\n",
+      "A\n",
+      "T\n",
+      "G\n",
+      "T\n",
+      "G\n",
+      "C\n",
+      "A\n",
+      "G\n",
+      "T\n",
+      "A\n",
+      "T\n",
+      "[['N' 'T' 'T' 'C' 'A' 'T' 'N' 'N' 'N' 'C' 'N' 'N' 'G' 'A' 'T']\n",
+      " ['T' 'T' 'T' 'C' 'A' 'N' 'G' 'T' 'G' 'C' 'N' 'G' 'T' 'A' 'T']\n",
+      " ['T' 'T' 'T' 'C' 'A' 'T' 'G' 'T' 'G' 'N' 'A' 'G' 'T' 'A' 'T']\n",
+      " ['T' 'T' 'T' 'C' 'A' 'T' 'G' 'T' 'G' 'N' 'A' 'G' 'G' 'N' 'T']\n",
+      " ['T' 'T' 'T' 'C' 'A' 'C' 'G' 'T' 'N' 'N' 'N' 'G' 'T' 'A' 'T']\n",
+      " ['T' 'T' 'T' 'C' 'A' 'T' 'G' 'N' 'G' 'C' 'A' 'G' 'T' 'A' 'T']]\n"
+     ]
+    }
+   ],
+   "source": [
+    "seqs = simulate(6, 15)\n",
+    "print(seqs)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### **Q: Describe how the `filter_missing` function works:**\n",
+    "Annotate the code by inserting lines with comments as you read through the function to make sense of it. How does it find columns with missing (N) values in them? How might you mprove it?\n",
+    "\n",
+    "A. This function is confusingly written and would probably benefit from being split in to a couple more lines with some intermediate variables so that readers would more easily be able to follow"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 53,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#takes two arguments, one a matrix with N (missing) values and the second a frequency in decimal form\n",
+    "def filter_missing(arr, maxfreq):\n",
+    "    #calculates the number of missing base pairs in each column and creates an array with the sum of missing base pairs \n",
+    "    #for each corresponding column, then divides that array by the total number of rows in the matrix to return the array with\n",
+    "    #the frequency of missing base paits in each column\n",
+    "    freqmissing = np.sum(arr == \"N\", axis=0) / arr.shape[0]\n",
+    "    #returns the original matrix but omitting the columns which have a frequency of missing base pairs higher than the inputed \n",
+    "    #maximum frequency\n",
+    "    return arr[:, freqmissing <= maxfreq]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 65,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([['A', 'T', 'G', 'C', 'T', 'G', 'C', 'C', 'T', 'G', 'A'],\n",
+       "       ['A', 'T', 'G', 'T', 'T', 'G', 'C', 'C', 'T', 'G', 'A'],\n",
+       "       ['A', 'T', 'G', 'T', 'T', 'G', 'C', 'C', 'T', 'G', 'A'],\n",
+       "       ['A', 'T', 'G', 'T', 'T', 'G', 'C', 'C', 'T', 'G', 'A'],\n",
+       "       ['A', 'T', 'G', 'T', 'G', 'G', 'C', 'C', 'T', 'G', 'G'],\n",
+       "       ['A', 'T', 'G', 'T', 'T', 'G', 'C', 'C', 'T', 'G', 'A']],\n",
+       "      dtype='<U1')"
+      ]
+     },
+     "execution_count": 65,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "filter_missing(seqs, 0.1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### **Q: Describe how the `filter_maf` function works:**\n",
+    "Annotate the code by inserting lines with comments as you read through the function to make sense of it. How does it calculate minor allele frequencies? Why does it use copy?\n",
+    "\n",
+    "A. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 94,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#function takes two arguments, one an array with mutations and missing BPs as 'N', and the second a frequency in decimal\n",
+    "def filter_maf(arr, minfreq):\n",
+    "    #calculates the total number of instances in each column that a base pair in the same column is not the same as the\n",
+    "    #base pair in the first row of the corresponding column and creates an array with the sum for each column divided by\n",
+    "    #the total number of rows in the matrix to return the array with the frequency of differences from the first in each column\n",
+    "    freqs = np.sum(arr != arr[0], axis=0) / arr.shape[0]\n",
+    "    #returns a copy of freqs so that the freqs array isn't modified\n",
+    "    maf = freqs.copy()\n",
+    "    #modifies maf so that values over .5 are replaced with 1 - the value\n",
+    "    maf[maf > 0.5] = 1 - maf[maf > 0.5]\n",
+    "    #returns the the array but omitting columns that have more than 50% different alleles within each column\n",
+    "    return arr[:, maf > minfreq]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 95,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([['N', 'C', 'T', 'A', 'N', 'A', 'N'],\n",
+       "       ['G', 'T', 'T', 'A', 'T', 'A', 'G'],\n",
+       "       ['G', 'T', 'T', 'A', 'T', 'A', 'G'],\n",
+       "       ['G', 'T', 'T', 'G', 'T', 'A', 'G'],\n",
+       "       ['G', 'T', 'G', 'A', 'T', 'G', 'N'],\n",
+       "       ['G', 'T', 'T', 'N', 'T', 'A', 'G']], dtype='<U1')"
+      ]
+     },
+     "execution_count": 95,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "filter_maf(seqs, 0.1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Q: What order should these functions be applied, does it matter?\n",
+    "\n",
+    "A. The `filter_missing` function should be applied first so that a column is not omitted during the `filter_maf` because it has mostly N values in it"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 96,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([['C', 'T', 'A'],\n",
+       "       ['T', 'T', 'A'],\n",
+       "       ['T', 'T', 'A'],\n",
+       "       ['T', 'T', 'A'],\n",
+       "       ['T', 'G', 'G'],\n",
+       "       ['T', 'T', 'A']], dtype='<U1')"
+      ]
+     },
+     "execution_count": 96,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "filter_missing(filter_maf(seqs, 0.1), 0.1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 97,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([['C', 'T', 'A'],\n",
+       "       ['T', 'T', 'A'],\n",
+       "       ['T', 'T', 'A'],\n",
+       "       ['T', 'T', 'A'],\n",
+       "       ['T', 'G', 'G'],\n",
+       "       ['T', 'T', 'A']], dtype='<U1')"
+      ]
+     },
+     "execution_count": 97,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "filter_maf(filter_missing(seqs, 0.1), 0.1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Q: Describe how `calculate_statistics()` works\n",
+    "\n",
+    "\n",
+    "A. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 112,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#function takes an array argument that includes mutations and missing BPs indicated as 'N'\n",
+    "def calculcate_statistics(arr):\n",
+    "    #calculates the number of times a BP in a column is the same as the corresponding value in the first row, \n",
+    "    #then returns the variance of the means for each column\n",
+    "    nd = np.var(arr == arr[0], axis=0).mean()\n",
+    "    #returns the mean of the average frequency of alleles in a given column being different than the first allele of the column\n",
+    "    mf = np.mean(np.sum(arr != arr[0], axis=0) / arr.shape[0])\n",
+    "    #returns the number of columns that contain BPs that are different from those in the first row\n",
+    "    inv = np.any(arr != arr[0], axis=0).sum()\n",
+    "    #returns the difference between the number of columns in the array and the number of columns that are invariant \n",
+    "    #(ie the number of columns that are variant)\n",
+    "    #but I also feel like these two variables got mislabeled\n",
+    "    var = arr.shape[1] - inv\n",
+    "    #return a series with the labels for each value being the string\n",
+    "    return pd.Series(\n",
+    "        {\"mean nucleotide diversity\": nd,\n",
+    "         \"mean minor allele frequency\": mf,\n",
+    "         \"invariant sites\": inv,\n",
+    "         \"variable sites\": var,\n",
+    "        })"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 113,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[['G' 'G' 'T' 'C' 'A' 'N' 'N' 'G' 'C' 'T' 'C' 'G' 'N' 'C' 'C']\n",
+      " ['G' 'G' 'C' 'N' 'A' 'C' 'G' 'G' 'C' 'T' 'C' 'G' 'G' 'C' 'C']\n",
+      " ['G' 'G' 'C' 'C' 'A' 'C' 'G' 'G' 'C' 'T' 'T' 'G' 'G' 'N' 'N']\n",
+      " ['G' 'G' 'C' 'C' 'A' 'C' 'G' 'G' 'C' 'T' 'T' 'G' 'G' 'C' 'C']\n",
+      " ['C' 'G' 'C' 'G' 'A' 'C' 'G' 'G' 'C' 'C' 'N' 'G' 'G' 'C' 'C']\n",
+      " ['G' 'G' 'C' 'C' 'A' 'N' 'G' 'G' 'A' 'T' 'T' 'G' 'G' 'C' 'C']]\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "invariant sites                11.000000\n",
+       "mean minor allele frequency     0.333333\n",
+       "mean nucleotide diversity       0.118519\n",
+       "variable sites                  4.000000\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 113,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "print(seqs)\n",
+    "calculcate_statistics(seqs)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Instructions: Write a `seqlib` Class object\n",
+    "\n",
+    "I started writing the bare bones of it below. You should write it so that it can be executed as described below to perform all of the functions we defined above, and so that its attributes can be accessed. Save this class object in a `.py` file and make it into an importable package called `seqlib`. You can write and test your object in this notebook if you like, but it must be saved separately in a `.py` file and be imported. You cannot execute the code at the end using your object defined here in the notebook. When finished save your package to GitHub as a repo just like we did with the `helloworld` package. You do not need to write a CLI script like we did for the `helloworld` package, we will only be using the Python API here. See the examples below for **how you should write your Class object**. It should be able to run in the way written below, so look at that code and think about how you would write a Class object that can do that. \n",
+    "\n",
+    "While you can mostly copy the functions from above, you will need to modify them slightly to access information about the Class object using *self*. For example, the `simulate()` function below takes self as a first argument and can access `self.inds` and `self.nsites` from that, so we do not need to provide those as arguments to the `simulate` function like we did above. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#!/usr/bin/env python\n",
+    "\n",
+    "\n",
+    "class Seqlib:\n",
+    "    def __init__(self, ninds, nsites):\n",
+    "        self.ninds = ninds\n",
+    "        self.nsites = nsites\n",
+    "        self.arr = self.simulate()\n",
+    "\n",
+    "    def mutate(self, base):\n",
+    "        diff = set(\"ACTG\") - set(base)\n",
+    "        return np.random.choice(list(diff))\n",
+    "\n",
+    "    def simulate(self):\n",
+    "        oseq = np.random.choice(list(\"ACGT\"), size=self.nsites)\n",
+    "        self.arr = np.array([oseq for i in range(self.ninds)])\n",
+    "        muts = np.random.binomial(1, 0.1, (self.ninds, self.nsites))\n",
+    "        for col in range(self.nsites):\n",
+    "            newbase = self.mutate(self.arr[0, col])\n",
+    "            mask = muts[:, col].astype(bool)\n",
+    "            self.arr[:, col][mask] = newbase\n",
+    "        missing = np.random.binomial(1, 0.1, (self.ninds, self.nsites))\n",
+    "        self.arr[missing.astype(bool)] = \"N\"\n",
+    "        return self.arr\n",
+    "\n",
+    "    def filter_missing(arr, maxfreq):\n",
+    "        freqmissing = np.sum(arr == \"N\", axis=0) / arr.shape[0]\n",
+    "        return arr[:, freqmissing <= maxfreq]\n",
+    "\n",
+    "    def filter_maf(arr, minfreq):\n",
+    "        freqs = np.sum(arr != arr[0], axis=0) / arr.shape[0]\n",
+    "        maf = freqs.copy()\n",
+    "        maf[maf > 0.5] = 1 - maf[maf > 0.5]\n",
+    "        return arr[:, maf > minfreq]\n",
+    "\n",
+    "    def calculcate_statistics(arr):\n",
+    "        nd = np.var(arr == arr[0], axis=0).mean()\n",
+    "        mf = np.mean(np.sum(arr != arr[0], axis=0) / arr.shape[0])\n",
+    "        inv = np.any(arr != arr[0], axis=0).sum()\n",
+    "        var = arr.shape[1] - inv\n",
+    "        return pd.Series(\n",
+    "            {\"mean nucleotide diversity\": nd,\n",
+    "             \"mean minor allele frequency\": mf,\n",
+    "             \"invariant sites\": inv,\n",
+    "             \"variable sites\": var,\n",
+    "             })\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Test your package\n",
+    "The package should be globally importable (you ran `pip install .` or `pip install -e .` to install it), and it should be able to execute the following code without error. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import seqlib"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "AttributeError",
+     "evalue": "'Seqlib' object has no attribute 'maf'",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[1;31mAttributeError\u001b[0m                            Traceback (most recent call last)",
+      "\u001b[1;32m<ipython-input-2-9de2b365a656>\u001b[0m in \u001b[0;36m<module>\u001b[1;34m()\u001b[0m\n\u001b[0;32m      1\u001b[0m \u001b[1;31m# init a Seqlib Class object\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m----> 2\u001b[1;33m \u001b[0mseqs\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mseqlib\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mSeqlib\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mninds\u001b[0m\u001b[1;33m=\u001b[0m\u001b[1;36m10\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mnsites\u001b[0m\u001b[1;33m=\u001b[0m\u001b[1;36m50\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m",
+      "\u001b[1;32mc:\\users\\cecilia\\seqlib\\seqlib\\seqlib.py\u001b[0m in \u001b[0;36m__init__\u001b[1;34m(self, ninds, nsites)\u001b[0m\n\u001b[0;32m     13\u001b[0m         \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mnsites\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mnsites\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m     14\u001b[0m         \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0marr\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0msimulate\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m---> 15\u001b[1;33m         \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mmaf\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m     16\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m     17\u001b[0m     \u001b[1;32mdef\u001b[0m \u001b[0mmutate\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mself\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mbase\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
+      "\u001b[1;31mAttributeError\u001b[0m: 'Seqlib' object has no attribute 'maf'"
+     ]
+    }
+   ],
+   "source": [
+    "# init a Seqlib Class object\n",
+    "seqs = seqlib.Seqlib(ninds=10, nsites=50)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "10 50\n"
+     ]
+    }
+   ],
+   "source": [
+    "# access attributes from the object\n",
+    "print(seqs.ninds, seqs.nsites)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "AttributeError",
+     "evalue": "'Seqlib' object has no attribute 'maf'",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[1;31mAttributeError\u001b[0m                            Traceback (most recent call last)",
+      "\u001b[1;32m<ipython-input-4-cfc604bf575d>\u001b[0m in \u001b[0;36m<module>\u001b[1;34m()\u001b[0m\n\u001b[0;32m      1\u001b[0m \u001b[1;31m# returns the MAF of the array as an array of floats\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m----> 2\u001b[1;33m \u001b[0mseqs\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mmaf\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m",
+      "\u001b[1;31mAttributeError\u001b[0m: 'Seqlib' object has no attribute 'maf'"
+     ]
+    }
+   ],
+   "source": [
+    "# returns the MAF of the array as an array of floats\n",
+    "seqs.maf"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "AttributeError",
+     "evalue": "'Seqlib' object has no attribute 'filter'",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[1;31mAttributeError\u001b[0m                            Traceback (most recent call last)",
+      "\u001b[1;32m<ipython-input-22-fdc847483552>\u001b[0m in \u001b[0;36m<module>\u001b[1;34m()\u001b[0m\n\u001b[0;32m      1\u001b[0m \u001b[1;31m# return a view of the filtered sequence array by applying a new function\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m      2\u001b[0m \u001b[1;31m# called `filter()` that applies both the maf and missing filter functions\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m----> 3\u001b[1;33m \u001b[0mseqs\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mfilter\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mminmaf\u001b[0m\u001b[1;33m=\u001b[0m\u001b[1;36m0.1\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mmaxmissing\u001b[0m\u001b[1;33m=\u001b[0m\u001b[1;36m0.0\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m",
+      "\u001b[1;31mAttributeError\u001b[0m: 'Seqlib' object has no attribute 'filter'"
+     ]
+    }
+   ],
+   "source": [
+    "# return a view of the filtered sequence array by applying a new function \n",
+    "# called `filter()` that applies both the maf and missing filter functions\n",
+    "seqs.filter(minmaf=0.1, maxmissing=0.0)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "TypeError",
+     "evalue": "calculcate_statistics() missing 1 required positional argument: 'arr'",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[1;31mTypeError\u001b[0m                                 Traceback (most recent call last)",
+      "\u001b[1;32m<ipython-input-19-78415590589c>\u001b[0m in \u001b[0;36m<module>\u001b[1;34m()\u001b[0m\n\u001b[0;32m      1\u001b[0m \u001b[1;31m# calculate statistics for an array with the results returned as a DataFrame\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m----> 2\u001b[1;33m \u001b[0mseqs\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mcalculcate_statistics\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m",
+      "\u001b[1;31mTypeError\u001b[0m: calculcate_statistics() missing 1 required positional argument: 'arr'"
+     ]
+    }
+   ],
+   "source": [
+    "# calculate statistics for an array with the results returned as a DataFrame\n",
+    "seqs.calculcate_statistics()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "AttributeError",
+     "evalue": "'Seqlib' object has no attribute 'filter'",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[1;31mAttributeError\u001b[0m                            Traceback (most recent call last)",
+      "\u001b[1;32m<ipython-input-20-87ab6dfb31dc>\u001b[0m in \u001b[0;36m<module>\u001b[1;34m()\u001b[0m\n\u001b[0;32m      1\u001b[0m \u001b[1;31m# calculate statistics for an array after filtering it\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m----> 2\u001b[1;33m \u001b[0mseqs\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mfilter\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mminmaf\u001b[0m\u001b[1;33m=\u001b[0m\u001b[1;36m0.1\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mmaxmissing\u001b[0m\u001b[1;33m=\u001b[0m\u001b[1;36m0.0\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mcalculate_statistics\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m",
+      "\u001b[1;31mAttributeError\u001b[0m: 'Seqlib' object has no attribute 'filter'"
+     ]
+    }
+   ],
+   "source": [
+    "# calculate statistics for an array after filtering it\n",
+    "seqs.filter(minmaf=0.1, maxmissing=0.0).calculate_statistics()"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.4"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
