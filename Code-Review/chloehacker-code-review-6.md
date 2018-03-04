@@ -39,10 +39,23 @@ def _get_maf(self):
                 maf[col] = freq
         return maf
 ```
-And also, for all of the other functions, I had parts of it that were correct but overall it was totally wrong and giving me an 
-error, so I fixed all of that 
-
-
+And also, for all of the other functions, I had parts of it that were correct but overall it was totally wrong and giving me an error, so I fixed all of that.
+Example:
+changed this
+```
+def filter_missing(self, maxfreq):   
+        arr = self.seqs
+        freqmissing = np.sum(arr == "N", axis=0) / arr.shape[0]  
+        return arr[:, freqmissing <= maxfreq]
+```
+to this
+```
+    def _filter_missing(self, maxmissing):
+        "returns a boolean filter True for columns with Ns > maxmissing"
+        freqmissing = np.sum(self.seqs == "N", axis=0) / self.seqs.shape[0]
+        return freqmissing > maxmissing
+```
+So it seemed like the general concept was kind of there but I didn't edit it properly to fit with the rest of the class object.
 #### Q: What did you learn from reviewing the completed assignment?
 
 A: I learned that I was at least on the right track but did not execute the actual code correctly so it made it impossible to run
