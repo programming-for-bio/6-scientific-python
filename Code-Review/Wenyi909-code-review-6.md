@@ -1,5 +1,5 @@
 ## Code Review for Wenyi909's `seqlib` package
-#### Code Examples to test modified package
+### Code Examples to test modified package
 Command_1 and Output:
 ```
 import seqlib
@@ -63,7 +63,7 @@ variable sites                 5.000000
 dtype: float64
 ```
 
-#### Where did you get stuck in the assignment? What was the problem?
+### Where did you get stuck in the assignment? What was the problem?
 I stuck at the last part of the assignment, in which we need to calculate statistics for an array after filtering it. I created two functions `filter` and `calculate_statistics`, which seems to work fine separatly. But when I performed: `seq.filter(minmaf=0.1, maxmissing=0.0).calculate_statistics()`
 
 The program returned:
@@ -80,17 +80,17 @@ I think this is because my `filter` function returns a numpy array object, inste
         return arr[:, maf > minmaf]
 Therefore the object after filtering does not have `calculate_statistics` attribute.
 
-#### What changes did you make upon seeing a completed version?
+### What changes did you make upon seeing a completed version?
 1. I changed funtions `mutate`, `simulate`, `maf`, `filter_missing`, and `filter_maf` into private functions;
 2. I fixed the bug in the function `calculate_statistics` where
 `inv = np.all(self.seqs == self.seqs[0], axis=0).sum()`
 3. I changed my functions `_maf` according to the completed version, so that before calculating maf, the function first gets rid of all the Ns.
 4. In order to fix the problem where I got stuck, I did what the completed version did, which modified the functions `_filter_missing` and `_filter_maf` to return boolean filters instead of arrays. And then we added function `filter` and `filter_seqlib` which combined the two boolean filters together to the array and returns a copy of the seqlib object.
 
-#### What did you learn from reviewing the completed assignment?
+### What did you learn from reviewing the completed assignment?
 I learnt that the type of variable being returned actually affects the results a lot. It's really important to always trace the function variables, seeing what are the inputs and what is the output.
 
-#### What aspect of the code/assignment is still confusing to you?
+### What aspect of the code/assignment is still confusing to you?
 1. I do not understand the part in function `filter` where 
 	`fullfilter = filter1 + filter2`
 	If `filter1` is `True` and `filter2` is `false`, what would `fullfilter` be?
