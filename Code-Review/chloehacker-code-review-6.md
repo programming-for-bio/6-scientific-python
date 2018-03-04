@@ -58,8 +58,7 @@ to this
 So it seemed like the general concept was kind of there but I didn't edit it properly to fit with the rest of the class object.
 #### Q: What did you learn from reviewing the completed assignment?
 
-A: I learned that I was at least on the right track but did not execute the actual code correctly so it made it impossible to run
-the seqlib library.
+A: I learned that I was at least on the right track but did not execute the actual code correctly so it made it impossible to runthe seqlib library. Also, I probably need to go back a few weeks and review some of that material so I am more comfortable with it. 
 
 #### Q: What aspect of the code/assignment is still confusing to you?
 
