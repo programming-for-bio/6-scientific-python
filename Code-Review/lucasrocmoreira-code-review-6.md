@@ -13,6 +13,7 @@ My code looks similar to the example, but still does not work.
 I made some changes:
 
 (1) I forgot to account for missing data in my `_get_maf()` function, so I had to add that.
+
 (2) I tried to make a single `filter()` function but then realized that they had to be split into `_filter_maf()` and `_filter_missing()`
 
 #### What did you learn from reviewing the completed assignment?
