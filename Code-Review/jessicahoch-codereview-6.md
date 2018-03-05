@@ -6,18 +6,19 @@ I got stuck in the final question which involved stringing multiple functions to
 
 Most of my arguments from old code had to be changed. For example: 
 
-'''
+```
 def mutate(base):
     diff = set("ACTG") - set(base)
     return np.random.choice(list(diff))
-    '''
+    ```
 
-'''
+
+```
  def _mutate(self, base):
         "converts a base to another base"
         diff = set("ACTG") - set(base)
         return np.random.choice(list(diff))
-        '''
+        ```
         
 ## **What did you learn from reviewing the completed assignment?**
 
