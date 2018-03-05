@@ -31,7 +31,7 @@ def __init__(self, ninds, nsites, maxfreq, minfreq):   --->    def __init__(self
 self.seqs = self.simulate()   --->   self.seqs = self._simulate()
 ```
 
-c)added more code
+c) added more code
 
 ```
 store maf of the full seq array
@@ -134,7 +134,7 @@ i) added the filter_seqlib function
         newself._get_maf()
         return newself
 ```       
-j)changed arr to seq
+j) changed arr to seq
 
 For example:
 ```
@@ -181,6 +181,6 @@ Deren's working version didn't work for me and I am not sure why.
 
 b) more specifically, I am confused by how to write the __init__ function as to what parameters to add, what attributes to write etc. 
 
-C)Other specific questions:
+C) Other specific questions:
 
 private vs public function - I understand the difference between those two but I am still kind of confused.
