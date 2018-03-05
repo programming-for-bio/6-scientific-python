@@ -34,7 +34,7 @@ One exmple of a change I made:
         # self.arr = arr #this did not work.
         # using return arr means init will print out arr? or pass > next fxn?
         # I also made this fxn private
-        ```
+```
 
 I commented some of the changes I made and some of the confusion I had.
 
