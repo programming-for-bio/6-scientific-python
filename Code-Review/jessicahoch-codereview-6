@@ -1,8 +1,8 @@
-## where did you get stuck in the assignment? What was the problem?
+## Where did you get stuck in the assignment? What was the problem?
 
 I got stuck in the final question which involved stringing multiple functions together. There were a couple of substantial problems including the absence of a mutate function. I used a lot of the old code which resulted in the functions taking the wrong arguments, which is why most of the functions weren't working. 
 
-## what changes did you make upon seeing a completed version?
+## What changes did you make upon seeing a completed version?
 
 Most of my old code had to be changed. For example: 
 
