@@ -171,16 +171,15 @@ Added below:
 
 #### Q3. What did you learn from reviewing the completed assignment?
 
-Reviewing the completed assignment was extremely helpful. It is very tough to ask questions through Gitter Chatroom, when you have no clue what went wrong. 
-I am hoping that the lecture on Monday will clarify some of my questions. 
+I learned how some of the functions work, but I still have not fully understood the Class object since I couldn’t get it to execute. Reviewing the completed assignment was extremely helpful. It is very tough to ask questions through Gitter Chatroom, when you have no clue what went wrong. I am hoping that the lecture on Monday will clarify some of my questions. 
 
 #### Q4. what aspect of the code/assignment is still confusing to you?
 
 a) writing code to access information about the Class object using self is confusing to me.
-Deren's working version didn't work for me and I am not sure why. 
+Deren's working version didn't work for me and I am not sure why.
 
 b) more specifically, I am confused by how to write the __init__ function as to what parameters to add, what attributes to write etc. 
 
-C) Other specific questions:
+C) Other specific question:
 
 private vs public function - I understand the difference between those two but I am still kind of confused.
