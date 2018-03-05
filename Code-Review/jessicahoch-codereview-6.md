@@ -4,7 +4,7 @@ I got stuck in the final question which involved stringing multiple functions to
 
 **What changes did you make upon seeing a completed version?**
 
-Most of my old code had to be changed. For example: 
+Most of my arguments from old code had to be changed. For example: 
 
 """
 def mutate(base):
